@@ -1,0 +1,3 @@
+[submodule "42cursus-libft"]
+	path = 42cursus-libft
+	url = https://github.com/eun61n00/42cursus-libft.git
