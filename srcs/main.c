@@ -6,87 +6,186 @@
 /*   By: eukwon <eukwon@student.42seoul.kr>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/07 10:56:09 by eukwon            #+#    #+#             */
-/*   Updated: 2022/11/22 12:09:57 by eukwon           ###   ########.fr       */
+/*   Updated: 2022/11/23 19:01:25 by eukwon           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/so_long.h"
 #include "../includes/get_next_line.h"
 #include "../lib/minilibx/mlx.h"
-
 #include <unistd.h>
 #include <fcntl.h>
 #include <stdlib.h>
 
-// int main(int argc, char* argv[])
+void			param_init(t_param *param)
+{
+	param->x = 3;
+	param->y = 4;
+}
+
+int				key_press(int keycode, t_param *param)
+{
+	if (keycode == KEY_W)
+		param->y++;
+	else if (keycode == KEY_S)
+		param->y--;
+	else if (keycode == KEY_A)
+		param->x--;
+	else if (keycode == KEY_D)
+		param->x++;
+	else if (keycode == KEY_ESC)
+		exit(0);
+	ft_printf("x: %d, y: %d\n", param->x, param->y);
+	return (0);
+}
+
+void	init_game(t_game *game, char *file)
+{
+	int	img_width;
+	int	img_height;
+
+	game->file = file;
+	game->map = ft_strdup("");
+	if (game->map == NULL)
+		ft_printf("System error, reboot game");
+	game->mlx = mlx_init();
+	game->c_cnt = 0;
+	game->e_cnt = 0;
+	game->p_cnt = 0;
+	game->move_cnt = 0;
+	game->img_grass = mlx_xpm_file_to_image(game->mlx,
+			"./asset/grass.xpm", &img_width, &img_height);
+	game->img_character = mlx_xpm_file_to_image(game->mlx,
+			"./asset/person.xpm", &img_width, &img_height);
+	game->img_wall = mlx_xpm_file_to_image(game->mlx,
+			"./asset/wall.xpm", &img_width, &img_height);
+	game->img_coin = mlx_xpm_file_to_image(game->mlx,
+			"./asset/coin.xpm", &img_width, &img_height);
+	game->img_exit = mlx_xpm_file_to_image(game->mlx,
+			"./asset/exit.xpm", &img_width, &img_height);
+}
+
+void	map_read(char *filename, t_game *game)
+{
+	int	fd;
+	char *line;
+
+	fd = open(filename, O_RDONLY);
+	ft_printf("%d\n", fd);
+	line = get_next_line(fd);
+	while (line != 0)
+	{
+		line = get_next_line(fd);
+		ft_printf("%s", line);
+	}
+	// int  fd;
+	// char *line;
+
+	// fd = open(filename, O_RDONLY);
+
+	// line = get_next_line(fd);
+
+	// game->map = ft_strjoin_without_newline(game->map, line);
+	// while (line)
+	// {
+	// 	game->height++;
+	// 	line = get_next_line(fd);
+	// 	if (line)
+	// 	{
+	// 		game->map = ft_strjoin_without_newline(game->map, line);
+	// 	}
+	// }
+	// close(fd);
+	// ft_printf("%s\n", game->map);
+}
+
+void	setting_img(t_game game)
+{
+	int		height;
+	int		width;
+
+	height = 0;
+	while (height < game.height)
+	{
+		width = 0;
+		while (width < game.width)
+		{
+			if (game.map[height * game.width + width] == '1')
+			{
+				mlx_put_image_to_window(game.mlx, game.win, game.img_wall, width * 64, height * 64);
+			}
+			else if (game.map[height * game.width + width] == 'C')
+			{
+				mlx_put_image_to_window(game.mlx, game.win, game.img_coin, width * 64, height * 64);
+			}
+			else if (game.map[height * game.width + width] == 'P')
+			{
+				mlx_put_image_to_window(game.mlx, game.win, game.img_character, width * 64, height * 64);
+			}
+			else if (game.map[height * game.width + width] == 'E')
+			{
+				mlx_put_image_to_window(game.mlx, game.win, game.img_exit, width * 64, height * 64);
+			}
+			else
+			{
+				mlx_put_image_to_window(game.mlx, game.win, game.img_grass, width * 64, height * 64);
+			}
+			width++;
+		}
+		height++;
+	}
+}
+
+// int			main(int argc, char *argv[])
 // {
-// 	int fd;
+// 	void		*mlx;
+// 	void		*win;
+// 	t_param		param;
+// 	t_game		game;
 
-// 	check_params(argc, argv);
+// 	param_init(&param);
+// 	// mlx = mlx_init();
+// 	// win = mlx_new_window(mlx, 500, 500, "mlx_project");
+// 	// mlx_hook(win, KEY_RELEASE, 0, &key_press, &param);
 
-// 	if ((fd = open(argv[1], O_RDONLY)) == -1)
-// 	{
-// 		ft_printf("Fail to open %s\n", argv[1]);
-// 		exit(0);
-// 	}
-// 	get_next_line(fd);
-// 	// ft_printf("%s\n", get_next_line(fd));
-// 	close(fd);
-// 	return (0);
-// }
+// 	if (argc < 2)
+// 		print_error("We need argument");
+// 	else if (argc > 2)
+// 		print_error("Too many arguments");
+// 	int i = 0;
+// 	// while (argv[1][i] != '\0')
+// 	// 	i++;
+// 	// if (ft_strncmp(&argv[1][i - 4], ".ber", 4) != 0)
+// 	// 	print_error("The file must be *.ber");
+// 	// if (open(argv[1], O_RDONLY) < 0)
+// 	// 	print_error("Check the file name again");
+// 	init_game(&game, argv[1]);
 
-// void	map_read(char *filename, t_game *game)
-// {
-// 	int  fd;
+// 	int	fd;
 // 	char *line;
 
-// 	fd = open(filename, O_RDONLY);
+// 	fd = open(argv[1], O_RDONLY);
+// 	ft_printf("%d\n", fd);
 // 	line = get_next_line(fd);
-// 	game->hei = 0;
-// 	game->wid = ft_strlen(line) - 1;
-// 	game->str_line = ft_strdup_without_newline(line);
-// 	free(line);
-// 	while (line)
+// 	while (line != 0)
 // 	{
-// 		game->hei++;
 // 		line = get_next_line(fd);
-// 		if (line)
-// 		{
-// 			game->str_line = ft_strjoin_without_newline(game->str_line, line);
-// 		}
+// 		ft_printf("%s", line);
 // 	}
-// 	close(fd);
-// 	printf("%s\n", game->str_line);
+// 	// map_read(argv[1], &game);
+// 	// mlx_loop(mlx);
 // }
 
-int main()
+int main(void)
 {
-	void *mlx;
-	void *win;
-	void *img;
-	void *img2;
-	void *img3;
-	void *img4;
-	void *img5;
-	void *img6;
-	void *img7;
-	int img_width;
-	int img_height;
 
-	mlx = mlx_init();
-	win = mlx_new_window(mlx, 500, 500, "my_mlx");
-	img = mlx_xpm_file_to_image(mlx, "./assets/mario.xpm", &img_width, &img_height);
-	img2 = mlx_xpm_file_to_image(mlx, "./assets/wall.xpm", &img_width, &img_height);
-	img3 = mlx_xpm_file_to_image(mlx, "./assets/grass.xpm", &img_width, &img_height);
-	img4 = mlx_xpm_file_to_image(mlx, "./assets/exit.xpm", &img_width, &img_height);
-	img5 = mlx_xpm_file_to_image(mlx, "./assets/coin.xpm", &img_width, &img_height);
+	int  fd;
+	char *line = ft_strdup("");
 
-	mlx_put_image_to_window(mlx, win, img, 0, 0);
-	mlx_put_image_to_window(mlx, win, img2, 64, 0);
-	mlx_put_image_to_window(mlx, win, img3, 128, 0);
-	mlx_put_image_to_window(mlx, win, img4, 192, 64);
-	mlx_put_image_to_window(mlx, win, img5, 0, 64);
-
-	mlx_loop(mlx);
-	return (0);
+	fd = open("./maps/map1.ber", O_RDONLY);
+	while (line != NULL)
+	{
+		line = get_next_line(fd);
+		ft_printf("%s", line);
+	}
 }

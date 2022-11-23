@@ -5,13 +5,12 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: eukwon <eukwon@student.42seoul.kr>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/04/18 18:24:49 by eukwon            #+#    #+#             */
-/*   Updated: 2022/11/15 16:42:54 by eukwon           ###   ########.fr       */
+/*   Created: 2022/11/23 18:49:19 by eukwon            #+#    #+#             */
+/*   Updated: 2022/11/23 18:50:46 by eukwon           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/get_next_line.h"
-#include "../lib/ft_printf/lib/libft/includes/libft.h"
 
 void	split_nl(char **fd_list_fd, char **temp)
 {
@@ -92,7 +91,7 @@ char	*read_line(int fd, char **fd_list)
 char	*get_next_line(int fd)
 {
 	char		*ret;
-	static char	*fd_list[FD_MAX];
+	static char	*fd_list[OPEN_MAX + 1];
 
 	if (fd < 0)
 		return (NULL);

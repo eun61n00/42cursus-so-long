@@ -6,7 +6,7 @@
 #    By: eukwon <eukwon@student.42seoul.kr>         +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/11/07 10:48:12 by eukwon            #+#    #+#              #
-#    Updated: 2022/11/19 19:40:23 by eukwon           ###   ########.fr        #
+#    Updated: 2022/11/23 17:43:31 by eukwon           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -62,6 +62,7 @@ SRCS = $(addprefix $(SRCS_DIR)/, \
 	check_params.c\
 	map_parsing.c\
 	get_next_line.c\
+	print_error.c\
 )
 
 OBJS = $(addprefix $(OBJS_DIR)/, $(notdir $(SRCS:.c=.o)))
